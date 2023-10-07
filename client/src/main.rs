@@ -1,5 +1,20 @@
+use serde::{Deserialize, Serialize};
 use std::io::{self, Read, Write};
 use std::net::TcpStream;
+use uuid::Uuid;
+
+#[derive(Deserialize, Serialize, Debug)]
+struct Message {
+    uuid: Uuid,
+    msg: Option<String>,
+}
+
+fn get_mock_message() -> Message {
+    Message {
+        uuid: Uuid::new_v4(),
+        msg: Some("Hi from clinet: ".to_owned()),
+    }
+}
 
 fn main() -> io::Result<()> {
     let mut buffer = [0; 1024];
