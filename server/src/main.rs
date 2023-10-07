@@ -1,5 +1,13 @@
+use serde::{Deserialize, Serialize};
 use std::io::{Read, Write};
-use std::net::{TcpListener, TcpStream};
+use std::net::{TcpStream, TcpListener};
+use uuid::Uuid;
+
+#[derive(Deserialize, Serialize, Debug)]
+struct Message {
+    uuid: Uuid,
+    msg: Option<String>,
+}
 
 fn main() {
     listen();
