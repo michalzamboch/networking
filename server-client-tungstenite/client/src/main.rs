@@ -1,4 +1,8 @@
-use tungstenite::{connect, Message};
+use tungstenite::{
+    connect,
+    protocol::{frame::coding::CloseCode::*, CloseFrame},
+    Message,
+};
 use url::Url;
 
 fn main() {
@@ -14,10 +18,22 @@ fn main() {
         println!("* {}", header);
     }
 
-    socket.send(Message::Text("Hello WebSocket".into())).unwrap();
+    socket
+        .send(Message::Text("Hello WebSocket".into()))
+        .unwrap();
+    socket.send(Message::Text("Bye WebSocket".into())).unwrap();
+
+    /*
     loop {
         let msg = socket.read().expect("Error reading message");
         println!("Received: {}", msg);
     }
-    // socket.close(None);
+    */
+
+    socket
+        .close(Some(CloseFrame {
+            code: Normal,
+            reason: "End".into(),
+        }))
+        .expect("Error while closing connection.");
 }

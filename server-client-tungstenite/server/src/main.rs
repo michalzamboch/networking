@@ -30,7 +30,15 @@ fn main() {
             loop {
                 let msg = websocket.read().unwrap();
                 if msg.is_binary() || msg.is_text() {
-                    websocket.send(msg).unwrap();
+                    println!(
+                        "Received and sending forward: {}",
+                        msg.clone().into_text().unwrap_or_default()
+                    );
+                    //websocket.send(msg).unwrap();
+                }
+                else if msg.is_close() {
+                    println!("Bye...");
+                    break;
                 }
             }
         });
