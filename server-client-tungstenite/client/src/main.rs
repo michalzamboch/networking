@@ -21,14 +21,19 @@ fn main() {
     socket
         .send(Message::Text("Hello WebSocket".into()))
         .unwrap();
-    socket.send(Message::Text("Bye WebSocket".into())).unwrap();
 
-    /*
-    loop {
-        let msg = socket.read().expect("Error reading message");
-        println!("Received: {}", msg);
+    let msg = socket.read().expect("Error reading message");
+    println!("Received: {:?}", msg);
+    
+
+    socket.send(Message::Text("get_data".into())).unwrap();
+
+    let msg = socket.read().expect("Error reading message");
+    if msg.is_text() {
+        println!("Data: {}", msg.into_text().unwrap_or_default());
     }
-    */
+
+    socket.send(Message::Text("Bye WebSocket".into())).unwrap();
 
     socket
         .close(Some(CloseFrame {

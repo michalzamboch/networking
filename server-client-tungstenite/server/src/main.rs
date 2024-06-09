@@ -3,6 +3,7 @@ use std::{net::TcpListener, thread::spawn};
 use tungstenite::{
     accept_hdr,
     handshake::server::{Request, Response},
+    Message,
 };
 
 fn main() {
@@ -27,16 +28,26 @@ fn main() {
             };
             let mut websocket = accept_hdr(stream.unwrap(), callback).unwrap();
 
+            websocket
+                .send(Message::Text("Hello from server.".into()))
+                .unwrap();
+
             loop {
                 let msg = websocket.read().unwrap();
-                if msg.is_binary() || msg.is_text() {
+
+                if msg.is_binary() {
                     println!(
                         "Received and sending forward: {}",
                         msg.clone().into_text().unwrap_or_default()
                     );
-                    //websocket.send(msg).unwrap();
-                }
-                else if msg.is_close() {
+                } else if msg.is_text() {
+                    let text = msg.clone().into_text().unwrap_or_default();
+                    if text == "get_data" {
+                        websocket
+                            .send(Message::Text("Data from server.".into()))
+                            .unwrap();
+                    }
+                } else if msg.is_close() {
                     println!("Bye...");
                     break;
                 }
